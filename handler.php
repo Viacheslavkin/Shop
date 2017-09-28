@@ -1,23 +1,28 @@
 <?php
 //соединение с базой данных
-function connectDataBase($server_name, $username, $password, $nameBD){
-    return new mysqli($server_name, $username, $password, $nameBD);
+function connectDataBase(){
+    return new mysqli(SERVER_NAME, USERNAME, PASSWORD, NAME_BASE_DATA);
 }
 
 //извлечение массива названий товаров
-function receive_the_goods ($conn, $nameTableStoreList){
+function receive_the_goods (){
+    $conn = connectDataBase();
 
-    $sqlGetGoods = "SELECT ".STORE_LIST_COLUMN_2." FROM $nameTableStoreList";
+    $sqlGetGoods = "SELECT ".STORE_LIST_COLUMN_2." FROM ".NAME_TABLE_STORE_LIST;
     $result = $conn->query($sqlGetGoods);
 
     $row = $result->fetch_all();
+    $conn->close();
 
     return $row;
 }
 
 //получение названия продукции по ключу
-function getNameGoods($conn, $key){
-    return (receive_the_goods ($conn, NAME_TABLE_STORE_LIST)[$key][0]);
+function getNameGoods($key){
+    $conn = connectDataBase();
+    $ret = receive_the_goods ($conn)[$key][0];
+    $conn->close();
+    return $ret;
 }
 
 //добавление единицы продукции
@@ -27,7 +32,7 @@ function add_product($key){
         $cart[$key] = 0;
     }
     $cart[$key] += 1;
-    setCookieGoods(NAME_LOCAL_STORAGE, $cart);
+    setCookieGoods($cart);
 }
 
 //получение количества продуктов из COOKIE-ов
@@ -39,13 +44,13 @@ function getCookieGoods (){
 }
 
 //сохранение количества продуктов в COOKIE-ах
-function setCookieGoods($name, $data){
-    setcookie("$name", json_encode($data));
+function setCookieGoods($data){
+    setcookie(NAME_LOCAL_STORAGE, json_encode($data));
 }
 
 //очистка корзины
-function clear_cart($name_cart_in_cookie){
-    setcookie("$name_cart_in_cookie", '');
+function clear_cart(){
+    setcookie(NAME_LOCAL_STORAGE, '');
 }
 
 //возвращает уникальный номер для номера заказа
@@ -59,31 +64,34 @@ function guid(){
 }
 
 //присвоение номера заказа и сохранение в таблице Order БД
-function checkoutOrderTable($conn, $orderNumber){
-    foreach(receive_the_goods($conn, NAME_TABLE_STORE_LIST) as $key=>$value) {
+function checkoutOrderTable(){
+    $conn = connectDataBase();
+    $orderNumber = guid();
+    foreach(receive_the_goods() as $key=>$value) {
         $goodId = $key+1;
-        if (isset(getCookieGoods(NAME_LOCAL_STORAGE)[$key])) {
+        if (isset(getCookieGoods()[$key])) {
             $sql = "INSERT INTO ".NAME_TABLE_ORDER."(".ORDER_TABLE_COLUMN_1.",".ORDER_TABLE_COLUMN_2.",
             ".ORDER_TABLE_COLUMN_3.")VALUES('".$orderNumber."','".$goodId."',
-            '".getCookieGoods(NAME_LOCAL_STORAGE)[$key]."')";
+            '".getCookieGoods()[$key]."')";
 
             $conn->query($sql);
         }
     }
+    $conn->close();
 }
 
 //асс массив заказов из БД
-function getTableOrder($conn,$nameTableOrderTable, $orderTableColumn1, $nameTableStoreList,
-                       $storeListColumn2, $orderTableColumn3, $storeListColumn1, $orderTableColumn2){
-    $sql = "SELECT $nameTableOrderTable.$orderTableColumn1,  
-        $nameTableStoreList.$storeListColumn2, $nameTableOrderTable.$orderTableColumn3
-        FROM $nameTableOrderTable 
-        JOIN $nameTableStoreList
-        ON $nameTableStoreList.$storeListColumn1 = $nameTableOrderTable.$orderTableColumn2
-        ";
+function getTableOrder(){
 
+    $conn = connectDataBase();
+
+    $sql = "SELECT ".NAME_TABLE_ORDER.".".ORDER_TABLE_COLUMN_1.",". NAME_TABLE_STORE_LIST.".".STORE_LIST_COLUMN_2.",". NAME_TABLE_ORDER.".".ORDER_TABLE_COLUMN_3." 
+        FROM ".NAME_TABLE_ORDER." 
+        JOIN ".NAME_TABLE_STORE_LIST."
+        ON ".NAME_TABLE_STORE_LIST.".".STORE_LIST_COLUMN_1." = ".NAME_TABLE_ORDER.".".ORDER_TABLE_COLUMN_2;
     $result = $conn->query($sql);
     $row = $result->fetch_all();
+    $conn->close();
 
     return $row;
 }

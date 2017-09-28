@@ -1,16 +1,17 @@
 <?php
 require "config.php";
 require "database_handler.php";
+require "initial_data.php";
 
 //устанавливаем соединение с СУБД
-$conn = connect(SERVER_NAME, USERNAME, PASSWORD);
+$conn = connect();
 
 //удаляем старую, создаем новую базу данных
-deleteAndCreateDataBase($conn, NAME_BASE_DATA);
+deleteAndCreateDataBase($conn);
 
 //создаем таблицы и колонки
-createTableGoods($conn, NAME_TABLE_STORE_LIST, STORE_LIST_COLUMN_1, STORE_LIST_COLUMN_2,MASS_OF_GOODS);
-createTableOrderByShop($conn, NAME_TABLE_ORDER, ORDER_TABLE_COLUMN_1, ORDER_TABLE_COLUMN_2, ORDER_TABLE_COLUMN_3);
+createTableGoods($conn);
+createTableOrderByShop($conn);
 
 //закрытие соединения с СУБД
 $conn->close();
