@@ -101,9 +101,6 @@ function getTableOrder(){
     //преобразование к удобному виду
     $ret = [];
     foreach ($row as $key => $item) {
-        if (!isset($r[$item[0]])) {
-            $ret[$item[0]] = [];
-        }
         $ret[$item[0]][] = [
             'goodName' => $item[1],
             'count' => $item[2]
