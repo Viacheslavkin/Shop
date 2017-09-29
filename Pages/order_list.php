@@ -5,19 +5,16 @@
 <html>
     <body>
         <table>
-                <?php
-                    $lastOrder = 0;
-                    foreach (getTableOrder() as $key=>$item){
-                        if($lastOrder != $item[0]){
-                            echo "<tr align='center'><td colspan='2'>Order $item[0]</td></tr>";
-                            echo "<tr align='center'><td>Name of product</td><td>Quantity of goods</td></tr>";
-                        }
-                        echo "<tr align='center'>";
-                        echo "<td>$item[1]</td><td>$item[2]</td>";
-                        echo "</tr>";
-                        $lastOrder = $item[0];
+            <?php
+                foreach (getTableOrder() as $orderId => $goods) {
+                    echo "<tr align='center'><td colspan='2'>номер заказа: ".$orderId."</td></tr>";
+                    echo "<tr><td>имя товара: </td><td>кол-во: </td></tr>";
+                    foreach ($goods as $good) {
+                        echo "<tr align='center'><td>".$good['goodName']."</td>";
+                        echo "<td>".$good['count']."</td></tr>";
                     }
-                ?>
+                }
+            ?>
         </table>
         <a href="product_page.php" title="к списку продукции">Back</a>
     </body>

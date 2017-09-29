@@ -14,13 +14,18 @@ function receive_the_goods (){
     $row = $result->fetch_all();
     $conn->close();
 
-    return $row;
+    //преобразование к удобному виду
+    $r = [];
+    foreach ($row as $key => $item) {
+        $r[$key] =$item[0];
+    }
+    return $r;
 }
 
 //получение названия продукции по ключу
 function getNameGoods($key){
     $conn = connectDataBase();
-    $ret = receive_the_goods ($conn)[$key][0];
+    $ret = receive_the_goods ()[$key];
     $conn->close();
     return $ret;
 }
@@ -93,6 +98,16 @@ function getTableOrder(){
     $row = $result->fetch_all();
     $conn->close();
 
-    return $row;
+    //преобразование к удобному виду
+    $ret = [];
+    foreach ($row as $key => $item) {
+        if (!isset($r[$item[0]])) {
+            $ret[$item[0]] = [];
+        }
+        $ret[$item[0]][] = [
+            'goodName' => $item[1],
+            'count' => $item[2]
+        ];
+    }
+    return $ret;
 }
-?>

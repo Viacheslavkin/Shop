@@ -20,4 +20,3 @@ if(isset($_POST['checkout'])){
     checkoutOrderTable();
     header("Location: Pages/product_page.php");
 }
-?>

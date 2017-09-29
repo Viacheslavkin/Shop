@@ -5,4 +5,3 @@ const MASS_OF_GOODS = [
     "Goods2",
     "Goods3"
 ];
-?>

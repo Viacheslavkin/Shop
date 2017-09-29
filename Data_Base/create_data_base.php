@@ -15,4 +15,3 @@ createTableOrderByShop($conn);
 
 //закрытие соединения с СУБД
 $conn->close();
-?>

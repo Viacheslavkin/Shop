@@ -4,7 +4,7 @@
     //данные пользователя
 const SERVER_NAME = "localhost";
 const USERNAME = "root";
-const PASSWORD = "ckfdrbyf,fpf";
+const PASSWORD = "";
 
     //база данных
 const NAME_BASE_DATA = "score";
@@ -19,4 +19,3 @@ const NAME_TABLE_ORDER = "OrdersByShop";
 const ORDER_TABLE_COLUMN_1 = "orderId";
 const ORDER_TABLE_COLUMN_2 = "goodId";
 const ORDER_TABLE_COLUMN_3 = "goodCount";
-?>
