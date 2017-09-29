@@ -8,7 +8,7 @@ function connectDataBase(){
 function receive_the_goods (){
     $conn = connectDataBase();
 
-    $sqlGetGoods = "SELECT ".STORE_LIST_COLUMN_2." FROM ".NAME_TABLE_STORE_LIST;
+    $sqlGetGoods = "SELECT * FROM ".NAME_TABLE_STORE_LIST;
     $result = $conn->query($sqlGetGoods);
 
     $row = $result->fetch_all();
@@ -17,7 +17,7 @@ function receive_the_goods (){
     //преобразование к удобному виду
     $r = [];
     foreach ($row as $key => $item) {
-        $r[$key] =$item[0];
+        $r[$item[0]] =$item[1];
     }
     return $r;
 }
@@ -72,12 +72,11 @@ function guid(){
 function checkoutOrderTable(){
     $conn = connectDataBase();
     $orderNumber = guid();
-    foreach(receive_the_goods() as $key=>$value) {
-        $goodId = $key+1;
-        if (isset(getCookieGoods()[$key])) {
+    foreach(receive_the_goods() as $goodId=>$value) {
+        if (isset(getCookieGoods()[$goodId])) {
             $sql = "INSERT INTO ".NAME_TABLE_ORDER."(".ORDER_TABLE_COLUMN_1.",".ORDER_TABLE_COLUMN_2.",
             ".ORDER_TABLE_COLUMN_3.")VALUES('".$orderNumber."','".$goodId."',
-            '".getCookieGoods()[$key]."')";
+            '".getCookieGoods()[$goodId]."')";
 
             $conn->query($sql);
         }
